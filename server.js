@@ -11,19 +11,20 @@ var rooms = [];
 
 //signalling server
 app.post("/ss/reloadroom", function(req, res) {
-    res.json(rooms[req.body].users);
-    rooms[req.body].users = [];
+    res.json(rooms[req.body.room].users);
+    rooms[req.body.room].users = [];
 });
 app.post("/ss/joinroom", function(req, res) {
     rooms[req.body.room].users.push(req.body.key)
-    res.json(rooms[req.body].p);
+    res.json(rooms[req.body.room].p);
 });
 app.post("/ss/createroom", function(req, res) {
-    rooms[req.body.room].p = req.body.key;
+    console.log("room created")
+    rooms[req.body.room] = { p: req.body.key, users: [] };
     res.json(true);
 });
 app.post("/ss/getroom", function(req, res) {
-    res.json(rooms[req.body].p);
+    res.json(rooms[req.body.room].p);
 });
 
 

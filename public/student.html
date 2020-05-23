@@ -51,8 +51,14 @@
         }
 
         function loadRoom(room) {
-            $.post("/ss/getroom", {}, function(proctorKey) {
-                connection.setRemoteDescription(proctorKey).then(function() {
+            $.post("/ss/getroom", {
+                room: room
+            }, function(proctorKey) {
+                console.log(proctorKey);
+                connection.setRemoteDescription({
+                    type: "offer",
+                    sdp: proctorKey
+                }).then(function() {
                     connection.createAnswer()
                 }).then(function(mine) {
                     connection.setLocalDescription(mine);
@@ -60,7 +66,8 @@
             })
             connection.onicecandidate = function() {
                 $.post("/ss/joinroom", {
-                    key: connection.localDescription.sdp
+                    key: connection.localDescription.sdp,
+                    room: room
                 }, function(data) {
 
                 });
