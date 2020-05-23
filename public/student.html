@@ -56,10 +56,11 @@
         }
 
         function loadRoom(room) {
+            console.log("loadROOM GOT CALLEDDDDDDD  RREEEEE")
             $.post("/ss/getroom", {
                 room: room
             }, function(proctorKey) {
-                console.log(proctorKey);
+
                 camConnection.setRemoteDescription({
                     type: "offer",
                     sdp: proctorKey
@@ -80,32 +81,36 @@
 
                 }
             })
+            setTimeout(function() {
+                //SCREEN CONNECTION TIME😀
+                $.post("/ss/getroom", {
+                    room: room
+                }, function(proctorKey) {
 
-            //SCREEN CONNECTION TIME😀
-            // $.post("/ss/getroom", {
-            //     room: room
-            // }, function(proctorKey) {
-            //     console.log(proctorKey);
-            //     screenConnection.setRemoteDescription({
-            //         type: "offer",
-            //         sdp: proctorKey
-            //     }).then(function() {
-            //         screenConnection.createAnswer()
-            //     }).then(function(mine) {
-            //         screenConnection.setLocalDescription(mine);
-            //     })
-            // }).then(function() {
-            //     screenConnection.onicecandidate = function() {
+                    screenConnection.setRemoteDescription({
+                        type: "offer",
+                        sdp: proctorKey
+                    }).then(function() {
+                        screenConnection.createAnswer()
+                    }).then(function(mine) {
+                        screenConnection.setLocalDescription(mine);
+                    })
+                }).then(function() {
+                    found = false;
+                    screenConnection.onicecandidate = function() {
+                        if (found == false) {
+                            found = true;
+                            console.log(screenConnection.localDescription.sdp)
+                            $.post("/ss/joinroom", {
+                                key: screenConnection.localDescription.sdp,
+                                room: room
+                            }, function(data) {
 
-            //         $.post("/ss/joinroom", {
-            //             key: screenConnection.localDescription.sdp,
-            //             room: room
-            //         }, function(data) {
-
-            //         })
-
-            //     }
-            // })
+                            })
+                        }
+                    }
+                })
+            }, 3000)
 
 
 

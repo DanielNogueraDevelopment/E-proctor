@@ -11,11 +11,16 @@ var rooms = [];
 
 //signalling server
 app.post("/ss/reloadroom", function(req, res) {
-    res.json(rooms[req.body.room].users);
-    rooms[req.body.room].users = [];
+    if (rooms[Number(req.body.room)]) {
+        res.json(rooms[Number(req.body.room)].users);
+        rooms[Number(req.body.room)].users = [];
+    } else {
+        res.json(false);
+    }
+
 });
 app.post("/ss/joinroom", function(req, res) {
-    console.log(req.body.key)
+
     rooms[req.body.room].users.push(req.body.key)
     res.json(rooms[req.body.room].p);
 });
@@ -31,7 +36,7 @@ app.post("/ss/getroom", function(req, res) {
 
 
 app.use(express.static("public"));
-
+setInterval(function() { console.log(rooms) }, 10000)
 
 
 //WE ARE NOW USING LOCALHOST://8080

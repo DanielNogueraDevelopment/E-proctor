@@ -43,62 +43,85 @@
                 videos.appendChild(video);
             }
 
+            a.
+
             return a;
         }
+        var room;
+        room = 0;
 
-        function createRoom(room) {
-            students[0] = student()
-            students[0].connection.createOffer().then(function(hostdesc) {
-                students[0].connection.setLocalDescription(hostdesc)
+        function createRoom(sconnection) {
+
+            sconnection.createOffer({
+                offerToReceiveVideo: true,
+                offerToReceiveAudio: true
+            }).then(function(hostdesc) {
+                sconnection.setLocalDescription(hostdesc)
             })
-            students[0].connection.onicecandidate = function() {
-                students[0].key = students[0].connection.localDescription.sdp;
-
+            sconnection.onicecandidate = function() {
 
                 $.post("/ss/createroom", {
                     room: room,
-                    key: students[0].key
+                    key: sconnection.localDescription.sdp
                 }, function(data) {
-
-
-
-
-                    setInterval(function() {
-
-
-                        $.post("/ss/reloadroom", {
-                            room: room,
-                        }, function(users) {
-
-                            users.forEach(
-                                function(user) {
-                                    students[students.length - 1].connection.setRemoteDescription(new RTCSessionDescription({
-                                        type: "answer",
-                                        sdp: user
-                                    }));
-
-
-                                    var newStudent = student();
-                                    students.push(newStudent);
-                                    $.post("/ss/createroom", {
-                                            room: room,
-                                            key: students[students.length - 1].key
-                                        }, function() {
-
-                                        }
-
-                                    );
-                                });
-
-
-                        });
-                    }, 1000)
-
-
-
 
                 })
             }
+        }
+
+        students[0] = student();
+
+        createRoom(students[0].connection);
+
+        setTimeout(startref, 1000);
+
+
+
+
+
+
+
+        //
+
+
+        function startref() {
+            setInterval(function() {
+
+
+                $.post("/ss/reloadroom", {
+                    room: room,
+                }, function(users) {
+                    if (users) {
+                        console.log(users)
+                        users.forEach(
+
+                            function(user) {
+
+                                students[students.length - 1].connection.setRemoteDescription(new RTCSessionDescription({
+                                    type: "answer",
+                                    sdp: user
+                                }));
+
+
+                                var newStudent = student();
+                                students.push(newStudent);
+                                createRoom(newStudent.connection);
+                            });
+                    }
+
+                });
+            }, 1000)
+        }
+
+
+        function snapshot(video) {
+            can = document.createElement("canvas");
+            imager = document.createElement("img");
+            context = can.getContext("2d");
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            var data = can.toDataURL('image/png');
+            imager.setAttribute('src', data);
+            return imager;
         }
     </script>
 </body>
