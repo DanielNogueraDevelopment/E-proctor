@@ -26,7 +26,12 @@
     <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
     <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
     <script>
-        var connection = new RTCPeerConnection({
+        var camConnection = new RTCPeerConnection({
+            iceServers: [{
+                urls: "stun:stun.1.google.com:19302"
+            }]
+        });
+        var screenConnection = new RTCPeerConnection({
             iceServers: [{
                 urls: "stun:stun.1.google.com:19302"
             }]
@@ -37,7 +42,7 @@
                 video: true,
                 audio: true
             }, function(stream) {
-                connection.addStream(stream)
+                camConnection.addStream(stream)
             }, function(err) {
                 console.log(err)
             })
@@ -45,7 +50,7 @@
                 video: true,
                 audio: true
             }).then(function(stream) {
-                connection.addStream(stream);
+                screenConnection.addStream(stream);
             })
 
         }
@@ -55,23 +60,60 @@
                 room: room
             }, function(proctorKey) {
                 console.log(proctorKey);
-                connection.setRemoteDescription({
+                camConnection.setRemoteDescription({
                     type: "offer",
                     sdp: proctorKey
                 }).then(function() {
-                    connection.createAnswer()
+                    camConnection.createAnswer()
                 }).then(function(mine) {
-                    connection.setLocalDescription(mine);
+                    camConnection.setLocalDescription(mine);
                 })
-            })
-            connection.onicecandidate = function() {
-                $.post("/ss/joinroom", {
-                    key: connection.localDescription.sdp,
-                    room: room
-                }, function(data) {
+            }).then(function() {
+                camConnection.onicecandidate = function() {
 
-                });
-            }
+                    $.post("/ss/joinroom", {
+                        key: camConnection.localDescription.sdp,
+                        room: room
+                    }, function(data) {
+
+                    })
+
+                }
+            })
+
+            //SCREEN CONNECTION TIME😀
+            // $.post("/ss/getroom", {
+            //     room: room
+            // }, function(proctorKey) {
+            //     console.log(proctorKey);
+            //     screenConnection.setRemoteDescription({
+            //         type: "offer",
+            //         sdp: proctorKey
+            //     }).then(function() {
+            //         screenConnection.createAnswer()
+            //     }).then(function(mine) {
+            //         screenConnection.setLocalDescription(mine);
+            //     })
+            // }).then(function() {
+            //     screenConnection.onicecandidate = function() {
+
+            //         $.post("/ss/joinroom", {
+            //             key: screenConnection.localDescription.sdp,
+            //             room: room
+            //         }, function(data) {
+
+            //         })
+
+            //     }
+            // })
+
+
+
+
+
+
+
+
         }
     </script>
 </body>

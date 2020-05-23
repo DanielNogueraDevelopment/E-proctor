@@ -27,66 +27,78 @@
     <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
     <script>
         var videos = document.getElementById("videos")
-        var connection = new RTCPeerConnection({
-            iceServers: [{
-                urls: "stun:stun.1.google.com:19302"
-            }]
-        });
-        connection.onaddstream = function(student) {
-            var video = document.createElement("video");
-            video.srcObject = student.stream;
-            video.play();
-            videos.appendChild(video);
-        }
-        var students = [];
+        var students = [student()];
 
-        function createRoom(room) {
-            connection.createOffer({
-                offerToReceiveVideo: true,
-                offerToReceiveAudio: true
-            }).then(function(description) {
-                connection.setLocalDescription(description)
-
+        function student() {
+            var a = {}
+            a.connection = new RTCPeerConnection({
+                iceServers: [{
+                    urls: "stun:stun.1.google.com:19302"
+                }]
             })
-            var haskey = false
-            connection.onicecandidate = function() {
-                if (!haskey) {
-                    haskey = true;
-                    var myKey = connection.localDescription.sdp;
-                    console.log(myKey)
-
-                    $.post("/ss/createroom", {
-                        room: room,
-                        key: myKey
-                    }, function(data) {
-                        setInterval(function() {
-                            if (connection.signalingState == "have-local-offer") {
-                                $.post("/ss/reloadroom", {
-                                    room: room,
-                                }, function(users) {
-                                    users.forEach(function(user) {
-                                        students.push({
-                                            sdp: user
-                                        });
-                                        connection.setRemoteDescription(new RTCSessionDescription({
-                                            type: "answer",
-                                            sdp: user
-                                        }))
-
-
-                                    });
-
-
-                                });
-                            }
-                        }, 1000);
-                    })
-                } else {
-
-                }
-
+            a.connection.onaddstream = function(student) {
+                var video = document.createElement("video");
+                video.srcObject = student.stream;
+                video.play();
+                videos.appendChild(video);
             }
 
+            return a;
+        }
+
+        function createRoom(room) {
+            students[0] = student()
+            students[0].connection.createOffer().then(function(hostdesc) {
+                students[0].connection.setLocalDescription(hostdesc)
+            })
+            students[0].connection.onicecandidate = function() {
+                students[0].key = students[0].connection.localDescription.sdp;
+
+
+                $.post("/ss/createroom", {
+                    room: room,
+                    key: students[0].key
+                }, function(data) {
+
+
+
+
+                    setInterval(function() {
+
+
+                        $.post("/ss/reloadroom", {
+                            room: room,
+                        }, function(users) {
+
+                            users.forEach(
+                                function(user) {
+                                    students[students.length - 1].connection.setRemoteDescription(new RTCSessionDescription({
+                                        type: "answer",
+                                        sdp: user
+                                    }));
+
+
+                                    var newStudent = student();
+                                    students.push(newStudent);
+                                    $.post("/ss/createroom", {
+                                            room: room,
+                                            key: students[students.length - 1].key
+                                        }, function() {
+
+                                        }
+
+                                    );
+                                });
+
+
+                        });
+                    }, 1000)
+
+
+
+
+                })
+            }
         }
     </script>
 </body>

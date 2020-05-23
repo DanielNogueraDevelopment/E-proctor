@@ -15,6 +15,7 @@ app.post("/ss/reloadroom", function(req, res) {
     rooms[req.body.room].users = [];
 });
 app.post("/ss/joinroom", function(req, res) {
+    console.log(req.body.key)
     rooms[req.body.room].users.push(req.body.key)
     res.json(rooms[req.body.room].p);
 });
@@ -33,15 +34,14 @@ app.use(express.static("public"));
 
 
 
+//WE ARE NOW USING LOCALHOST://8080
+
+//If you go to localhost://8080 ON YOUR COMPUTER it should be the server.
 
 
-//If you go to localhost://3000 ON YOUR COMPUTER it should be the server.
-
-
-//http://localhost:3000/index.html
+//http://localhost:8080/index.html
 //all html files in the public folder are automatically hosted
 
 
-//http://localhost:3000/index.html
-//all html files in the public folder are automatically hosted
-app.listen(3000);
+
+app.listen(8080);
