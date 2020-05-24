@@ -1,11 +1,55 @@
 <html>
 
 <head>
-
+    <link rel="stylesheet" href="proctor.css">
 </head>
 
 <body>
-
+    <div class="navigation">
+        <nav class="navbar navbar-light bg-light">
+            <a class="navbar-brand" href="#">
+                <img src="images/Logo.png" width="30" height="30" class="d-inline-block align-top" alt="" loading="lazy"> e-Proctor
+            </a>
+        </nav>
+    </div>
+    <div class="mx-auto row justify-content-md-center" style="height: 3%;">&nbsp;</div>
+    <div class="mx-auto row justify-content-md-center" style="height: 7%;">
+        <div class="col text-center navbar-brand" style="font-size: x-large; color: #006BB0">
+            Hi Proctor!
+        </div>
+    </div>
+    <div class="mx-auto row justify-content-md-center" style="height: 3%;">&nbsp;</div>
+    <div class="exam-start">
+        <div class="mx-auto row justify-content-md-center" style="height: 20%;">
+            <div class="col">
+            </div>
+            <div class="col text-center" style="border-radius: 25px; border-width: thin; border: solid #94C1F3;">
+                <div class="mx-auto row justify-content-md-center" style="height: 10%;">&nbsp;</div>
+                <div class="mx-auto row text-center justify-content-md-center navbar-brand" style="vertical-align: middle; font-size: x-large; color: #2e2d2d; height: 35%;">
+                    <u>Please fill the following information</u>
+                </div>
+                <div class="mx-auto row justify-content-md-center" style="height: 35%;">
+                    <form>
+                        <div class="mx-auto row form-group">
+                            <div class="col text-center" style="width: 30%;">
+                                <label for="room" class="col-form-label navbar-brand">Room Number</label>
+                            </div>
+                            <div class="col" style="width: 70%;">
+                                <input type="number" class="form-control" id="room">
+                            </div>
+                        </div>
+                        <div class="mx-auto form-group row">
+                            <div class="col text-center">
+                                <button type="submit" class="center btn btn-outline-primary">Start</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="col">
+            </div>
+        </div>
+    </div>
     <div id="videos"></div>
 
 
@@ -32,6 +76,7 @@
 
     <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
     <script src="face-api.min.js"></script>
+    <script src="/resemble.js"></script>
     <script>
         faceapi.loadFaceRecognitionModel()
 
@@ -39,31 +84,117 @@
 
         async function loadCams() {
 
-            for (let i = 6; i < students.length + 1; i = i + 2) {
-                var success = true;
+
+
+            var cams = document.getElementsByClassName("webcam")
+            for (let i = 0; i < cams.length; i++) {
                 try {
-                    image = getImg(i);
-                } catch {
-                    console.log(i + "doesn't work")
-                    success = false
+
+                    var distance = faceapi.utils.round(
+                        faceapi.euclideanDistance(await faceapi.computeFaceDescriptor(await snapshot(cams[i])), await faceapi.computeFaceDescriptor(students[i].pic))
+                    )
+                } catch { //this happens a lot don't worry about it
                 }
-                if (success) {
-                    try {
-                        var distance = faceapi.utils.round(
-                            faceapi.euclideanDistance(await faceapi.computeFaceDescriptor(await getImg(i)), await faceapi.computeFaceDescriptor(students[i].pic))
-                        )
-                        console.log(distance);
-                        students[i].confidence = distance;
-                    } catch (e) {
-                        console.log(e)
-                    }
+                students[i].confidence = distance;
 
-
-                    students[i].pic = getImg(i).cloneNode(true);
-                }
-
+                console.log("FACIAL RECOGNITION: " + distance);
+                students[i].pic = snapshot(cams[i]).cloneNode(true);
             }
+
+
+
+            // for (let i = 6; i < students.length + 1; i = i + 2) {
+            //     if (students[i]) {
+            //         var success = true;
+            //         try {
+            //             image = getImg(i);
+            //         } catch {
+            //             console.log(i + "doesn't work")
+            //             success = false
+            //         }
+            //         if (success) {
+            //             try {
+            //                 var distance = faceapi.utils.round(
+            //                     faceapi.euclideanDistance(await faceapi.computeFaceDescriptor(await getImg(i)), await faceapi.computeFaceDescriptor(students[i].pic))
+            //                 )
+            //                 console.log("FACIAL RECOGNITION: " + distance);
+            //                 students[i].confidence = distance;
+            //             } catch (e) {
+            //                 console.log(e)
+            //             }
+            //             students[i].pic = getImg(i).cloneNode(true);
+            //         }
+            //     }
+            // }
         }
+
+
+        var cams = [];
+
+        // async function loadScreens() {
+
+        //     for (let i = 5; i < students.length + 1; i = i + 2) {
+        //         var success = true;
+        //         try {
+        //             image = getImg(i);
+
+        //         } catch {
+        //             console.log(i + "doesn't work")
+        //             success = false
+        //         }
+        //         if (success) {
+        //             try {
+        //                 resemble(getImg(i).src).compareTo(students[i].pic.src).outputSettings({
+        //                     useCrossOrigin: false,
+        //                     boundingBox: {
+        //                         top: 0,
+        //                         bottom: 10
+        //                     }
+        //                 }).onComplete(function(a) {
+        //                     console.log("TAB RECOGNITION" + a)
+        //                 })
+        //             } catch (oof) {
+        //                 //oof
+        //                 console.log("a oof occured:" + JSON.stringify(oof))
+        //             }
+        //             students[i].pic = getImg(i);
+
+
+        //         }
+
+        //     }
+        // }
+
+
+        function checkScreens() {
+            var screens = document.getElementsByClassName("screenShare")
+            for (let i = 0; i < screens.length; i++) {
+                const element = screens[i];
+                var pic = snapshot(element);
+                resemble(pic.src).compareTo(pic.src).outputSettings({
+                    useCrossOrigin: false,
+                    boundingBox: {
+                        top: 0,
+                        bottom: 50
+                    }
+                }).onComplete(function(a) {
+                    console.log("TAB RECOGNITION" + a.misMatchPercentage);
+                })
+            }
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -100,7 +231,12 @@
                 video.srcObject = student.stream;
                 video.play();
                 video.classList.add('stream');
+                video.classList.add('webcam');
                 video.setAttribute("id", students.length);
+                video.onclick = function(event) {
+                    event.target.classList.add('screenShare');
+                    event.target.classList.remove('webcam');
+                }
                 videos.appendChild(video);
             }
 
@@ -174,6 +310,8 @@
                 });
 
                 loadCams();
+                checkScreens();
+                //loadScreens();
             }, 1000)
 
         }
