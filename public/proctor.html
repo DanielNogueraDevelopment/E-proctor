@@ -78,7 +78,7 @@
         faceapi.loadFaceRecognitionModel()
 
 
-
+        var webCams = [];
         async function loadCams() {
 
 
@@ -88,14 +88,17 @@
                 try {
 
                     var distance = faceapi.utils.round(
-                        faceapi.euclideanDistance(await faceapi.computeFaceDescriptor(await snapshot(cams[i])), await faceapi.computeFaceDescriptor(students[cams[i].getAttribute("id")].pic))
+                        faceapi.euclideanDistance(await faceapi.computeFaceDescriptor(await snapshot(cams[i])), await faceapi.computeFaceDescriptor(webCams[cams[i].getAttribute("id")].pic))
                     )
                 } catch { //this happens a lot don't worry about it
                 }
-                if (!students[cams[i].getAttribute("id")]) {
-                    students[cams[i].getAttribute("id")] = {}
+                if (!webCams[cams[i].getAttribute("id")]) {
+                    webCams[cams[i].getAttribute("id")] = {}
                 }
-                students[cams[i].getAttribute("id")].confidence = distance;
+                webCams[cams[i].getAttribute("id")].confidence = distance;
+
+
+
 
                 console.log("FACIAL RECOGNITION: " + distance);
                 if (distance > 0.35) {
@@ -111,27 +114,27 @@
                         cams[i].classList.add("green");
                     }, 10000)
                 }
-                students[cams[i].getAttribute("id")] = {
+                webCams[cams[i].getAttribute("id")] = {
                     pic: snapshot(cams[i]).cloneNode(true)
                 };
             }
 
-
-
         }
+
+
 
 
         var cams = [];
 
-
+        var allScreens = []
 
         function checkScreens() {
             var screens = document.getElementsByClassName("screenShare")
             for (let i = 0; i < screens.length; i++) {
                 const element = screens[i];
                 var pic = snapshot(element);
-                if (students[i + 1000]) {
-                    resemble(students[i + 1000].pic.src).compareTo(pic.src).outputSettings({
+                if (students[i]) {
+                    resemble(allScreens[screens[i].getAttribute("id")].pic.src).compareTo(pic.src).outputSettings({
                         useCrossOrigin: false,
                         boundingBox: {
                             top: 0,
@@ -139,9 +142,10 @@
                         }
                     }).onComplete(function(a) {
                         console.log("TAB RECOGNITION" + a.misMatchPercentage);
-                        students[screens[i].getAttribute("id") + 1000] = {
+                        allScreens[screens[i].getAttribute("id")] = {
                             confidence: a.misMatchPercentage,
-                            pic: pic
+                            pic: pic,
+                            connection: allScreens[screens[i].getAttribute("id")].connection
                         };
                         if (a.misMatchPercentage > 0.01) {
                             screens[i].classList.add("red")
@@ -234,6 +238,7 @@
                 }]
             })
             a.connection.onaddstream = function(student) {
+                console.log(student)
                 var video = document.createElement("video");
                 video.srcObject = student.stream;
                 video.play();
@@ -253,15 +258,17 @@
             return a;
         }
         var room;
+        students[0] = student();
         $(".generateroom").click(function() {
-            room = $("#roomnum").val();
-            students[0] = student();
-            createRoom(students[0].connection);
             setTimeout(startref, 1000);
+            room = $("#roomnum").val();
+            createRoom(students[0].connection);
+
         })
 
         function createRoom(sconnection) {
-            student[0] = student();
+
+
             sconnection.createOffer({
                 offerToReceiveVideo: true,
                 offerToReceiveAudio: true
@@ -280,8 +287,7 @@
         }
 
 
-
-
+        student[0] = student();
 
 
 
@@ -301,14 +307,14 @@
                 $.post("/ss/reloadroom", {
                     room: room,
                 }, function(users) {
+
                     if (users) {
 
                         users.forEach(
 
+
                             function(user) {
-                                if (!students[students.length - 1].connection) {
-                                    students[students.length - 1].connection = student().connection
-                                }
+
                                 students[students.length - 1].connection.setRemoteDescription(new RTCSessionDescription({
                                     type: "answer",
                                     sdp: user
