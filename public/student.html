@@ -105,18 +105,17 @@
                         screenConnection.setLocalDescription(mine);
                     })
                 }).then(function() {
-                    found = false;
-                    screenConnection.onicecandidate = function() {
-                        if (found == false) {
-                            found = true;
-                            console.log(screenConnection.localDescription.sdp)
-                            $.post("/ss/joinroom", {
-                                key: screenConnection.localDescription.sdp,
-                                room: room
-                            }, function(data) {
 
-                            })
-                        }
+                    screenConnection.onicecandidate = function() {
+
+                        console.log(screenConnection.localDescription.sdp)
+                        $.post("/ss/joinroom", {
+                            key: screenConnection.localDescription.sdp,
+                            room: room
+                        }, function(data) {
+
+                        })
+
                     }
                 })
             }, 3000)

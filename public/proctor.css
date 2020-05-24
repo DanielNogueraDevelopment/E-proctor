@@ -5,9 +5,21 @@
 }
 
 .video {
-    padding: 3%;
-    width: 25%;
-    height: position: relative;
-    top: 0;
-    left: 0;
+    margin: 3%;
+    padding: 1%;
+    width: 18%;
+    position: relative;
+    border-bottom: 15px dotted #2e2d2d;
+}
+
+.red {
+    border-color: rgba(238, 0, 0, 0.966) !important;
+}
+
+.orange {
+    border-color: orange;
+}
+
+.green {
+    border-color: green;
 }

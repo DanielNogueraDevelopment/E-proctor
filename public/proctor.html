@@ -46,32 +46,18 @@
     </div>
     <div class="mx-auto row justify-content-md-center" style="height: 15%;">&nbsp;</div>
     <div class="mx-auto row" id="videos" style="height: 45%; border-width: thin; border: solid #006BB0;">
-        <div class="video-container">
-            <div class="video">
-                <img src="images/Logo.png" class="d-inline-block align-top" alt="" loading="lazy">
-            </div>
-        </div>
-        <div class="video-container">
-            <div class="video">
-                <img src="images/Logo.png" class="d-inline-block align-top" alt="" loading="lazy">
-            </div>
-        </div>
-        <div class="video-container">
-            <div class="video">
-                <img src="images/Logo.png" class="d-inline-block align-top" alt="" loading="lazy">
-            </div>
-        </div>
-        <div class="video-container">
-            <div class="video">
-                <img src="images/Logo.png" class="d-inline-block align-top" alt="" loading="lazy">
-            </div>
-        </div>
-        <!-- <img src="images/Logo.png" class="d-inline-block align-top" alt="" loading="lazy">
-        <img src="images/Logo.png" class="d-inline-block align-top" alt="" loading="lazy">
-        <img src="images/Logo.png" class="d-inline-block align-top" alt="" loading="lazy">
-        <img src="images/Logo.png" class="d-inline-block align-top" alt="" loading="lazy">
-        <img src="images/Logo.png" class="d-inline-block align-top" alt="" loading="lazy"> -->
-
+        <img src="images/Logo.png" class="video d-inline-block align-top" alt="" loading="lazy">
+        <img src="images/StudentUnselected.png" class="video d-inline-block align-top" alt="" loading="lazy">
+        <video class="video" autoplay>
+            <source src=http://techslides.com/demos/sample-videos/small.mp4>
+        </video>
+        <video class="video" autoplay>
+            <source src=http://techslides.com/demos/sample-videos/small.mp4>
+        </video>
+        <img src="images/Logo.png" class="video d-inline-block align-top" alt="" loading="lazy">
+        <img src="images/Logo.png" class="video d-inline-block align-top" alt="" loading="lazy">
+        <img src="images/Logo.png" class="video d-inline-block align-top" alt="" loading="lazy">
+        <img src="images/Logo.png" class="video d-inline-block align-top" alt="" loading="lazy">
     </div>
 
 
@@ -202,7 +188,7 @@
                         }
                     }).onComplete(function(a) {
                         console.log("TAB RECOGNITION" + a.misMatchPercentage);
-                        students[i + 1000].confidence =
+                        students[i + 1000].confidence = a.misMatchPercentage;
                     })
                 }
                 students[i + 1000] = {
@@ -217,7 +203,38 @@
 
 
 
+        function getAlert() {
+            var screens = document.getElementsByClassName("screenShare")
+            for (let i = 0; i < screens.length; i++) {
+                if (students[screens[i].id].confidence > 0.01) {
+                    screens[i].classList.add("red")
+                    setTimeout(function() {
+                        screens[i].classList.remove("red");
+                        screens[i].classList.add("green");
+                    }, 10000)
+                }
+            }
 
+            var cams = document.getElementsByClassName("webcam")
+            for (let i = 0; i < cams.length; i++) {
+                if (student[cams[i].id] > 0.45) {
+                    cams[i].classList.add("red")
+                    setTimeout(function() {
+                        cams[i].classList.remove("red");
+                        cams[i].classList.add("green");
+                    }, 10000)
+                } else if (student[cams[i].id] > 0.35) {
+                    cams[i].classList.add("orange")
+                    setTimeout(function() {
+                        cams[i].classList.remove("orange");
+                        cams[i].classList.add("green");
+                    }, 10000)
+                }
+            }
+
+
+
+        }
 
 
 
@@ -259,6 +276,7 @@
                 video.srcObject = student.stream;
                 video.play();
                 video.classList.add('stream');
+                video.classList.add('video');
                 video.classList.add('webcam');
                 video.setAttribute("id", students.length);
                 video.onclick = function(event) {
