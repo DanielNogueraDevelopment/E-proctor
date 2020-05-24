@@ -133,7 +133,7 @@
             for (let i = 0; i < screens.length; i++) {
                 const element = screens[i];
                 var pic = snapshot(element);
-                if (students[i]) {
+                if (allScreens[screens[i].getAttribute("id")]) {
                     resemble(allScreens[screens[i].getAttribute("id")].pic.src).compareTo(pic.src).outputSettings({
                         useCrossOrigin: false,
                         boundingBox: {
@@ -145,7 +145,6 @@
                         allScreens[screens[i].getAttribute("id")] = {
                             confidence: a.misMatchPercentage,
                             pic: pic,
-                            connection: allScreens[screens[i].getAttribute("id")].connection
                         };
                         if (a.misMatchPercentage > 0.01) {
                             screens[i].classList.add("red")
@@ -155,6 +154,11 @@
                             }, 10000)
                         }
                     })
+                } else {
+                    allScreens[screens[i].getAttribute("id")] = {
+                        confidence: 0,
+                        pic: pic,
+                    };
                 }
                 // students[screens[i].getAttribute("id") + 1000] = {
                 //     pic: pic,
