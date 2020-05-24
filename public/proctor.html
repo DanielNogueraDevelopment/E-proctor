@@ -12,45 +12,67 @@
             </a>
         </nav>
     </div>
-    <div class="mx-auto row justify-content-md-center" style="height: 3%;">&nbsp;</div>
     <div class="mx-auto row justify-content-md-center" style="height: 7%;">
         <div class="col text-center navbar-brand" style="font-size: x-large; color: #006BB0">
             Hi Proctor!
         </div>
     </div>
-    <div class="mx-auto row justify-content-md-center" style="height: 3%;">&nbsp;</div>
-    <div class="exam-start">
-        <div class="mx-auto row justify-content-md-center" style="height: 20%;">
-            <div class="col">
+    <div class="mx-auto row exam-start justify-content-md-center" style="height: 15%;">
+        <div class="col"></div>
+        <div class="col text-center" style="border-radius: 25px; border-width: thin; border: solid #94C1F3;">
+            <div class="mx-auto row justify-content-md-center" style="height: 10%;">&nbsp;</div>
+            <div class="mx-auto row text-center justify-content-md-center navbar-brand" style="vertical-align: middle; font-size: x-large; color: #2e2d2d; height: 35%;">
+                <u>Please fill the following information</u>
             </div>
-            <div class="col text-center" style="border-radius: 25px; border-width: thin; border: solid #94C1F3;">
-                <div class="mx-auto row justify-content-md-center" style="height: 10%;">&nbsp;</div>
-                <div class="mx-auto row text-center justify-content-md-center navbar-brand" style="vertical-align: middle; font-size: x-large; color: #2e2d2d; height: 35%;">
-                    <u>Please fill the following information</u>
-                </div>
-                <div class="mx-auto row justify-content-md-center" style="height: 35%;">
-                    <form>
-                        <div class="mx-auto row form-group">
-                            <div class="col text-center" style="width: 30%;">
-                                <label for="room" class="col-form-label navbar-brand">Room Number</label>
-                            </div>
-                            <div class="col" style="width: 70%;">
-                                <input type="number" class="form-control" id="room">
-                            </div>
+            <div class="mx-auto row justify-content-md-center" style="height: 35%;">
+                <form>
+                    <div class="mx-auto row form-group">
+                        <div class="col text-center" style="width: 30%;">
+                            <label for="room" class="col-form-label navbar-brand">Room Number</label>
                         </div>
-                        <div class="mx-auto form-group row">
-                            <div class="col text-center">
-                                <button type="submit" class="center btn btn-outline-primary">Start</button>
-                            </div>
+                        <div class="col" style="width: 70%;">
+                            <input type="number" class="form-control" id="room">
                         </div>
-                    </form>
-                </div>
-            </div>
-            <div class="col">
+                    </div>
+                    <div class="mx-auto form-group row">
+                        <div class="col text-center">
+                            <button type="submit" class="center btn btn-outline-primary">Start</button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
+        <div class="col"></div>
     </div>
-    <div id="videos"></div>
+    <div class="mx-auto row justify-content-md-center" style="height: 15%;">&nbsp;</div>
+    <div class="mx-auto row" id="videos" style="height: 45%; border-width: thin; border: solid #006BB0;">
+        <div class="video-container">
+            <div class="video">
+                <img src="images/Logo.png" class="d-inline-block align-top" alt="" loading="lazy">
+            </div>
+        </div>
+        <div class="video-container">
+            <div class="video">
+                <img src="images/Logo.png" class="d-inline-block align-top" alt="" loading="lazy">
+            </div>
+        </div>
+        <div class="video-container">
+            <div class="video">
+                <img src="images/Logo.png" class="d-inline-block align-top" alt="" loading="lazy">
+            </div>
+        </div>
+        <div class="video-container">
+            <div class="video">
+                <img src="images/Logo.png" class="d-inline-block align-top" alt="" loading="lazy">
+            </div>
+        </div>
+        <!-- <img src="images/Logo.png" class="d-inline-block align-top" alt="" loading="lazy">
+        <img src="images/Logo.png" class="d-inline-block align-top" alt="" loading="lazy">
+        <img src="images/Logo.png" class="d-inline-block align-top" alt="" loading="lazy">
+        <img src="images/Logo.png" class="d-inline-block align-top" alt="" loading="lazy">
+        <img src="images/Logo.png" class="d-inline-block align-top" alt="" loading="lazy"> -->
+
+    </div>
 
 
 
@@ -171,15 +193,21 @@
             for (let i = 0; i < screens.length; i++) {
                 const element = screens[i];
                 var pic = snapshot(element);
-                resemble(pic.src).compareTo(pic.src).outputSettings({
-                    useCrossOrigin: false,
-                    boundingBox: {
-                        top: 0,
-                        bottom: 50
-                    }
-                }).onComplete(function(a) {
-                    console.log("TAB RECOGNITION" + a.misMatchPercentage);
-                })
+                if (students[i + 1000]) {
+                    resemble(students[i + 1000].pic.src).compareTo(pic.src).outputSettings({
+                        useCrossOrigin: false,
+                        boundingBox: {
+                            top: 0,
+                            bottom: 10
+                        }
+                    }).onComplete(function(a) {
+                        console.log("TAB RECOGNITION" + a.misMatchPercentage);
+                        students[i + 1000].confidence =
+                    })
+                }
+                students[i + 1000] = {
+                    pic: pic
+                }
             }
 
 
