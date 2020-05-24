@@ -31,12 +31,12 @@
                             <label for="room" class="col-form-label navbar-brand">Room Number</label>
                         </div>
                         <div class="col" style="width: 70%;">
-                            <input type="number" class="form-control" id="room">
+                            <input type="number" class="form-control" id="roomnum"></input>
                         </div>
                     </div>
                     <div class="mx-auto form-group row">
                         <div class="col text-center">
-                            <button type="submit" class="center btn btn-outline-primary">Start</button>
+                            <div class="generateroom center btn btn-outline-primary">Start</div>
                         </div>
                     </div>
                 </form>
@@ -46,18 +46,7 @@
     </div>
     <div class="mx-auto row justify-content-md-center" style="height: 15%;">&nbsp;</div>
     <div class="mx-auto row" id="videos" style="height: 45%; border-width: thin; border: solid #006BB0;">
-        <img src="images/Logo.png" class="video d-inline-block align-top" alt="" loading="lazy">
-        <img src="images/StudentUnselected.png" class="video d-inline-block align-top" alt="" loading="lazy">
-        <video class="video" autoplay>
-            <source src=http://techslides.com/demos/sample-videos/small.mp4>
-        </video>
-        <video class="video" autoplay>
-            <source src=http://techslides.com/demos/sample-videos/small.mp4>
-        </video>
-        <img src="images/Logo.png" class="video d-inline-block align-top" alt="" loading="lazy">
-        <img src="images/Logo.png" class="video d-inline-block align-top" alt="" loading="lazy">
-        <img src="images/Logo.png" class="video d-inline-block align-top" alt="" loading="lazy">
-        <img src="images/Logo.png" class="video d-inline-block align-top" alt="" loading="lazy">
+
     </div>
 
 
@@ -99,79 +88,41 @@
                 try {
 
                     var distance = faceapi.utils.round(
-                        faceapi.euclideanDistance(await faceapi.computeFaceDescriptor(await snapshot(cams[i])), await faceapi.computeFaceDescriptor(students[i].pic))
+                        faceapi.euclideanDistance(await faceapi.computeFaceDescriptor(await snapshot(cams[i])), await faceapi.computeFaceDescriptor(students[cams[i].getAttribute("id")].pic))
                     )
                 } catch { //this happens a lot don't worry about it
                 }
-                students[i].confidence = distance;
+                if (!students[cams[i].getAttribute("id")]) {
+                    students[cams[i].getAttribute("id")] = {}
+                }
+                students[cams[i].getAttribute("id")].confidence = distance;
 
                 console.log("FACIAL RECOGNITION: " + distance);
-                students[i].pic = snapshot(cams[i]).cloneNode(true);
+                if (distance > 0.35) {
+                    cams[i].classList.add("red")
+                    setTimeout(function() {
+                        cams[i].classList.remove("red");
+                        cams[i].classList.add("green");
+                    }, 10000)
+                } else if (distance > 0.25) {
+                    cams[i].classList.add("orange")
+                    setTimeout(function() {
+                        cams[i].classList.remove("orange");
+                        cams[i].classList.add("green");
+                    }, 10000)
+                }
+                students[cams[i].getAttribute("id")] = {
+                    pic: snapshot(cams[i]).cloneNode(true)
+                };
             }
 
 
 
-            // for (let i = 6; i < students.length + 1; i = i + 2) {
-            //     if (students[i]) {
-            //         var success = true;
-            //         try {
-            //             image = getImg(i);
-            //         } catch {
-            //             console.log(i + "doesn't work")
-            //             success = false
-            //         }
-            //         if (success) {
-            //             try {
-            //                 var distance = faceapi.utils.round(
-            //                     faceapi.euclideanDistance(await faceapi.computeFaceDescriptor(await getImg(i)), await faceapi.computeFaceDescriptor(students[i].pic))
-            //                 )
-            //                 console.log("FACIAL RECOGNITION: " + distance);
-            //                 students[i].confidence = distance;
-            //             } catch (e) {
-            //                 console.log(e)
-            //             }
-            //             students[i].pic = getImg(i).cloneNode(true);
-            //         }
-            //     }
-            // }
         }
 
 
         var cams = [];
 
-        // async function loadScreens() {
-
-        //     for (let i = 5; i < students.length + 1; i = i + 2) {
-        //         var success = true;
-        //         try {
-        //             image = getImg(i);
-
-        //         } catch {
-        //             console.log(i + "doesn't work")
-        //             success = false
-        //         }
-        //         if (success) {
-        //             try {
-        //                 resemble(getImg(i).src).compareTo(students[i].pic.src).outputSettings({
-        //                     useCrossOrigin: false,
-        //                     boundingBox: {
-        //                         top: 0,
-        //                         bottom: 10
-        //                     }
-        //                 }).onComplete(function(a) {
-        //                     console.log("TAB RECOGNITION" + a)
-        //                 })
-        //             } catch (oof) {
-        //                 //oof
-        //                 console.log("a oof occured:" + JSON.stringify(oof))
-        //             }
-        //             students[i].pic = getImg(i);
-
-
-        //         }
-
-        //     }
-        // }
 
 
         function checkScreens() {
@@ -188,11 +139,22 @@
                         }
                     }).onComplete(function(a) {
                         console.log("TAB RECOGNITION" + a.misMatchPercentage);
-                        students[i + 1000].confidence = a.misMatchPercentage;
+                        students[screens[i].getAttribute("id") + 1000] = {
+                            confidence: a.misMatchPercentage,
+                            pic: students[screens[i].getAttribute("id") + 1000].pic
+                        };
+                        if (a.misMatchPercentage > 0.01) {
+                            screens[i].classList.add("red")
+                            setTimeout(function() {
+                                screens[i].classList.remove("red");
+                                screens[i].classList.add("green");
+                            }, 10000)
+                        }
                     })
                 }
-                students[i + 1000] = {
-                    pic: pic
+                students[screens[i].getAttribute("id") + 1000] = {
+                    pic: pic,
+                    confidence: students[screens[i].getAttribute("id") + 1000].confidence
                 }
             }
 
@@ -206,7 +168,7 @@
         function getAlert() {
             var screens = document.getElementsByClassName("screenShare")
             for (let i = 0; i < screens.length; i++) {
-                if (students[screens[i].id].confidence > 0.01) {
+                if (students[Number(screens[i].getAttribute("id"))] && students[Number(screens[i].id)].confidence > 0.01) {
                     screens[i].classList.add("red")
                     setTimeout(function() {
                         screens[i].classList.remove("red");
@@ -217,13 +179,13 @@
 
             var cams = document.getElementsByClassName("webcam")
             for (let i = 0; i < cams.length; i++) {
-                if (student[cams[i].id] > 0.45) {
+                if (student[Number(cams[i].getAttribute("id") + 1000)] > 0.45) {
                     cams[i].classList.add("red")
                     setTimeout(function() {
                         cams[i].classList.remove("red");
                         cams[i].classList.add("green");
                     }, 10000)
-                } else if (student[cams[i].id] > 0.35) {
+                } else if (student[cams[i].getAttribute("id") + 1000] > 0.35) {
                     cams[i].classList.add("orange")
                     setTimeout(function() {
                         cams[i].classList.remove("orange");
@@ -291,7 +253,12 @@
             return a;
         }
         var room;
-        room = 0;
+        $(".generateroom").click(function() {
+            room = $("#roomnum").val();
+            students[0] = student();
+            createRoom(students[0].connection);
+            setTimeout(startref, 1000);
+        })
 
         function createRoom(sconnection) {
 
@@ -312,11 +279,11 @@
             }
         }
 
-        students[0] = student();
 
-        createRoom(students[0].connection);
 
-        setTimeout(startref, 1000);
+
+
+
 
 
 
@@ -335,7 +302,7 @@
                     room: room,
                 }, function(users) {
                     if (users) {
-                        console.log(users)
+
                         users.forEach(
 
                             function(user) {
@@ -357,6 +324,7 @@
 
                 loadCams();
                 checkScreens();
+                getAlert();
                 //loadScreens();
             }, 1000)
 
