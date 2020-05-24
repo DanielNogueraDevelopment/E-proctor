@@ -141,7 +141,7 @@
                         console.log("TAB RECOGNITION" + a.misMatchPercentage);
                         students[screens[i].getAttribute("id") + 1000] = {
                             confidence: a.misMatchPercentage,
-                            pic: students[screens[i].getAttribute("id") + 1000].pic
+                            pic: pic
                         };
                         if (a.misMatchPercentage > 0.01) {
                             screens[i].classList.add("red")
@@ -152,10 +152,10 @@
                         }
                     })
                 }
-                students[screens[i].getAttribute("id") + 1000] = {
-                    pic: pic,
-                    confidence: students[screens[i].getAttribute("id") + 1000].confidence
-                }
+                // students[screens[i].getAttribute("id") + 1000] = {
+                //     pic: pic,
+                //     confidence: students[screens[i].getAttribute("id") + 1000].confidence
+                // }
             }
 
 
@@ -165,38 +165,38 @@
 
 
 
-        function getAlert() {
-            var screens = document.getElementsByClassName("screenShare")
-            for (let i = 0; i < screens.length; i++) {
-                if (students[Number(screens[i].getAttribute("id"))] && students[Number(screens[i].id)].confidence > 0.01) {
-                    screens[i].classList.add("red")
-                    setTimeout(function() {
-                        screens[i].classList.remove("red");
-                        screens[i].classList.add("green");
-                    }, 10000)
-                }
-            }
+        // function getAlert() {
+        //     var screens = document.getElementsByClassName("screenShare")
+        //     for (let i = 0; i < screens.length; i++) {
+        //         if (students[Number(screens[i].getAttribute("id"))] && students[Number(screens[i].id)].confidence > 0.01) {
+        //             screens[i].classList.add("red")
+        //             setTimeout(function() {
+        //                 screens[i].classList.remove("red");
+        //                 screens[i].classList.add("green");
+        //             }, 10000)
+        //         }
+        //     }
 
-            var cams = document.getElementsByClassName("webcam")
-            for (let i = 0; i < cams.length; i++) {
-                if (student[Number(cams[i].getAttribute("id") + 1000)] > 0.45) {
-                    cams[i].classList.add("red")
-                    setTimeout(function() {
-                        cams[i].classList.remove("red");
-                        cams[i].classList.add("green");
-                    }, 10000)
-                } else if (student[cams[i].getAttribute("id") + 1000] > 0.35) {
-                    cams[i].classList.add("orange")
-                    setTimeout(function() {
-                        cams[i].classList.remove("orange");
-                        cams[i].classList.add("green");
-                    }, 10000)
-                }
-            }
+        //     var cams = document.getElementsByClassName("webcam")
+        //     for (let i = 0; i < cams.length; i++) {
+        //         if (student[Number(cams[i].getAttribute("id") + 1000)] > 0.45) {
+        //             cams[i].classList.add("red")
+        //             setTimeout(function() {
+        //                 cams[i].classList.remove("red");
+        //                 cams[i].classList.add("green");
+        //             }, 10000)
+        //         } else if (student[cams[i].getAttribute("id") + 1000] > 0.35) {
+        //             cams[i].classList.add("orange")
+        //             setTimeout(function() {
+        //                 cams[i].classList.remove("orange");
+        //                 cams[i].classList.add("green");
+        //             }, 10000)
+        //         }
+        //     }
 
 
 
-        }
+        // }
 
 
 
@@ -261,7 +261,7 @@
         })
 
         function createRoom(sconnection) {
-
+            student[0] = student();
             sconnection.createOffer({
                 offerToReceiveVideo: true,
                 offerToReceiveAudio: true
@@ -306,7 +306,9 @@
                         users.forEach(
 
                             function(user) {
-
+                                if (!students[students.length - 1].connection) {
+                                    students[students.length - 1].connection = student().connection
+                                }
                                 students[students.length - 1].connection.setRemoteDescription(new RTCSessionDescription({
                                     type: "answer",
                                     sdp: user
@@ -324,7 +326,7 @@
 
                 loadCams();
                 checkScreens();
-                getAlert();
+                //getAlert();
                 //loadScreens();
             }, 1000)
 
