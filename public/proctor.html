@@ -19,7 +19,7 @@
     </div>
     <div class="mx-auto row exam-start justify-content-md-center" style="height: 15%;">
         <div class="col"></div>
-        <div class="col text-center" style="border-radius: 25px; border-width: thin; border: solid #94C1F3;">
+        <div class="col text-center dataenter" style="border-radius: 25px; border-width: thin; border: solid #94C1F3;">
             <div class="mx-auto row justify-content-md-center" style="height: 10%;">&nbsp;</div>
             <div class="mx-auto row text-center justify-content-md-center navbar-brand" style="vertical-align: middle; font-size: x-large; color: #2e2d2d; height: 35%;">
                 <u>Please fill the following information</u>
@@ -146,7 +146,7 @@
                             confidence: a.misMatchPercentage,
                             pic: pic,
                         };
-                        if (a.misMatchPercentage > 0.01) {
+                        if (a.misMatchPercentage > 1) {
                             screens[i].classList.add("red")
                             setTimeout(function() {
                                 screens[i].classList.remove("red");
@@ -264,6 +264,8 @@
         var room;
         students[0] = student();
         $(".generateroom").click(function() {
+            $(".dataenter").toggle();
+            $("#videos").toggle();
             setTimeout(startref, 1000);
             room = $("#roomnum").val();
             createRoom(students[0].connection);

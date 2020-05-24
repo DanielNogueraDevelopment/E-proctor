@@ -14,11 +14,11 @@
     </div>
     <div class="mx-auto row justify-content-md-center" style="height: 15%;">&nbsp;</div>
     <div class="mx-auto row justify-content-md-center" style="height: 10%;">
-        <div class="col text-center navbar-brand" style="font-size: xx-large; color: #006BB0">
+        <div class="col maintext text-center navbar-brand" style="font-size: xx-large; color: #006BB0">
             Hello Student!
         </div>
     </div>
-    <div class="mx-auto row exam-start justify-content-md-center" style="height: 20%;">
+    <div class="dataenter mx-auto row exam-start justify-content-md-center" style="height: 20%;">
         <div class="col"></div>
         <div class="col text-center" style="height: 200%; border-radius: 25px; border-width: thin; border: solid #94C1F3;">
             <div class="mx-auto row justify-content-md-center" style="height: 5%;">&nbsp;</div>
@@ -80,6 +80,9 @@
         })
 
         function init() {
+            $(".navbar-brand")
+            $(".dataenter").toggle();
+            $(".maintext").text("You have connected successfully!")
             loadStudent(function() {
                 loadRoom($("#roomnum").val())
             })
